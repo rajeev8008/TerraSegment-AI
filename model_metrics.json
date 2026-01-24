@@ -1,0 +1,112 @@
+{
+  "accuracy": 0.7583020329475403,
+  "loss": 0.8506639003753662,
+  "f1_score": 0.6703043584690537,
+  "model_parameters": 1941190,
+  "training_samples": 44,
+  "validation_samples": 12,
+  "epochs": 50,
+  "batch_size": 32,
+  "learning_rate": 0.0005,
+  "per_class_metrics": {
+    "Building": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 45124.0
+    },
+    "Land": {
+      "precision": 0.736992831223496,
+      "recall": 0.9955905530060724,
+      "f1-score": 0.846993116842785,
+      "support": 517752.0
+    },
+    "Road": {
+      "precision": 0.9752168525402726,
+      "recall": 0.008418372804484094,
+      "f1-score": 0.01669264950738655,
+      "support": 93486.0
+    },
+    "Vegetation": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 18511.0
+    },
+    "Water": {
+      "precision": 0.9292210956170677,
+      "recall": 0.7806649058001384,
+      "f1-score": 0.8484896636105064,
+      "support": 102601.0
+    },
+    "Unlabeled": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 8958.0
+    },
+    "accuracy": 0.7583020528157552,
+    "macro avg": {
+      "precision": 0.4402384632301393,
+      "recall": 0.29744563860178247,
+      "f1-score": 0.285362571660113,
+      "support": 786432.0
+    },
+    "weighted avg": {
+      "precision": 0.7223607999923886,
+      "recall": 0.7583020528157552,
+      "f1-score": 0.6703043584690537,
+      "support": 786432.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      0,
+      44493,
+      2,
+      1,
+      628,
+      0
+    ],
+    [
+      0,
+      515469,
+      3,
+      3,
+      2277,
+      0
+    ],
+    [
+      0,
+      91275,
+      787,
+      0,
+      1424,
+      0
+    ],
+    [
+      0,
+      16832,
+      0,
+      0,
+      1679,
+      0
+    ],
+    [
+      0,
+      22488,
+      15,
+      1,
+      80097,
+      0
+    ],
+    [
+      0,
+      8865,
+      0,
+      0,
+      93,
+      0
+    ]
+  ]
+}

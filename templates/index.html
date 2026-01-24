@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TerraSegment AI - Aerial Image Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="background-animation"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-globe"></i>
+                    <h1>TerraSegment AI</h1>
+                </div>
+                <p class="subtitle">Aerial Image Semantic Segmentation Explorer</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Tab Navigation -->
+            <div class="tabs-container">
+                <button class="tab-btn active" data-tab="ai-mode">
+                    <i class="fas fa-brain"></i> AI Segmentation
+                </button>
+                <button class="tab-btn" data-tab="search-mode">
+                    <i class="fas fa-database"></i> Database Search
+                </button>
+            </div>
+
+            <div class="content-wrapper">
+                <!-- AI Mode Panel -->
+                <div class="tab-content active" id="ai-mode">
+                    <div class="ai-container">
+                        <!-- Left: Upload & Images -->
+                        <div class="ai-left">
+                            <div class="upload-section">
+                                <h2 class="panel-title">Upload & Segment</h2>
+                                <p class="panel-description">Upload an aerial image for real-time semantic segmentation</p>
+                                
+                                <div class="upload-box" id="uploadBox">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Drag & drop your image here</p>
+                                    <p class="upload-hint">or click to browse</p>
+                                    <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                                </div>
+
+                                <div id="aiResults" style="display: none;">
+                                    <div class="results-grid">
+                                        <div class="result-item">
+                                            <h3>Original Image</h3>
+                                            <div class="result-image">
+                                                <img id="originalImage" src="" alt="Original">
+                                            </div>
+                                        </div>
+                                        <div class="result-item">
+                                            <h3>Segmentation Mask</h3>
+                                            <div class="result-image">
+                                                <img id="maskImage" src="" alt="Mask">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <button id="uploadAgainBtn" class="btn btn-secondary btn-lg">
+                                        <i class="fas fa-upload"></i> Upload Another Image
+                                    </button>
+                                </div>
+
+                                <div id="aiLoading" style="display: none;">
+                                    <div class="loading-container">
+                                        <div class="spinner"></div>
+                                        <p>Analyzing image with AI model...</p>
+                                    </div>
+                                </div>
+
+                                <div id="aiError" class="error-message" style="display: none;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Analysis Panel -->
+                        <div class="ai-right" id="aiRightPanel" style="display: none;">
+                            <div class="analysis-panel">
+                                <h2 class="panel-title">Terrain Analysis</h2>
+
+                                <!-- Color Legend -->
+                                <div class="legend-section">
+                                    <h3>Terrain Classes</h3>
+                                    <div class="legend-grid">
+                                        <div class="legend-item">
+                                            <div class="legend-color" style="background-color: rgb(255, 0, 0);"></div>
+                                            <span>Building</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-color" style="background-color: rgb(255, 255, 0);"></div>
+                                            <span>Land</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-color" style="background-color: rgb(192, 192, 192);"></div>
+                                            <span>Road</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-color" style="background-color: rgb(0, 255, 0);"></div>
+                                            <span>Vegetation</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-color" style="background-color: rgb(0, 0, 255);"></div>
+                                            <span>Water</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Detailed Breakdown -->
+                                <div class="breakdown-section">
+                                    <h3>Detailed Composition</h3>
+                                    
+                                    <div class="breakdown-item">
+                                        <div class="breakdown-header">
+                                            <span class="breakdown-label">Building</span>
+                                            <span class="breakdown-percent" id="buildingPercent">0%</span>
+                                        </div>
+                                        <div class="breakdown-bar">
+                                            <div class="breakdown-fill building-fill" id="buildingBar"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="breakdown-item">
+                                        <div class="breakdown-header">
+                                            <span class="breakdown-label">Land</span>
+                                            <span class="breakdown-percent" id="landPercent">0%</span>
+                                        </div>
+                                        <div class="breakdown-bar">
+                                            <div class="breakdown-fill land-fill" id="landBar"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="breakdown-item">
+                                        <div class="breakdown-header">
+                                            <span class="breakdown-label">Road</span>
+                                            <span class="breakdown-percent" id="roadPercent">0%</span>
+                                        </div>
+                                        <div class="breakdown-bar">
+                                            <div class="breakdown-fill road-fill" id="roadBar"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="breakdown-item">
+                                        <div class="breakdown-header">
+                                            <span class="breakdown-label">Vegetation</span>
+                                            <span class="breakdown-percent" id="vegetationPercent">0%</span>
+                                        </div>
+                                        <div class="breakdown-bar">
+                                            <div class="breakdown-fill vegetation-fill" id="vegetationBar"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="breakdown-item">
+                                        <div class="breakdown-header">
+                                            <span class="breakdown-label">Water</span>
+                                            <span class="breakdown-percent" id="waterPercent">0%</span>
+                                        </div>
+                                        <div class="breakdown-bar">
+                                            <div class="breakdown-fill water-fill" id="waterBar"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Summary Stats -->
+                                <div class="summary-stats">
+                                    <h3>Summary</h3>
+                                    <div class="stat-row">
+                                        <span>Dominant Class:</span>
+                                        <span class="stat-value" id="dominantClass">-</span>
+                                    </div>
+                                    <div class="stat-row">
+                                        <span>Model Confidence:</span>
+                                        <span class="stat-value" id="confidence">High</span>
+                                    </div>
+                                </div>
+
+                                <!-- Export Options -->
+                                <div class="export-section">
+                                    <button class="btn btn-secondary btn-sm" id="copyStats">
+                                        <i class="fas fa-copy"></i> Copy Stats
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search Mode Panel -->
+                <div class="tab-content" id="search-mode">
+                <!-- Control Panel -->
+                <div class="control-panel">
+                    <h2 class="panel-title">Terrain Composition</h2>
+                    <p class="panel-description">Adjust sliders to find matching aerial images</p>
+
+                    <!-- Sliders -->
+                    <div class="sliders-container">
+                        <!-- Water -->
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <label for="waterSlider">
+                                    <i class="fas fa-water"></i> Water
+                                </label>
+                                <span class="slider-value" id="waterValue">30%</span>
+                            </div>
+                            <input type="range" id="waterSlider" class="slider" min="0" max="100" value="30">
+                            <div class="progress-bar water-progress"></div>
+                        </div>
+
+                        <!-- Road -->
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <label for="roadSlider">
+                                    <i class="fas fa-road"></i> Road
+                                </label>
+                                <span class="slider-value" id="roadValue">25%</span>
+                            </div>
+                            <input type="range" id="roadSlider" class="slider" min="0" max="100" value="25">
+                            <div class="progress-bar road-progress"></div>
+                        </div>
+
+                        <!-- Vegetation -->
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <label for="vegetationSlider">
+                                    <i class="fas fa-leaf"></i> Vegetation
+                                </label>
+                                <span class="slider-value" id="vegetationValue">20%</span>
+                            </div>
+                            <input type="range" id="vegetationSlider" class="slider" min="0" max="100" value="20">
+                            <div class="progress-bar vegetation-progress"></div>
+                        </div>
+
+                        <!-- Buildings -->
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <label for="buildingsSlider">
+                                    <i class="fas fa-building"></i> Buildings
+                                </label>
+                                <span class="slider-value" id="buildingsValue">15%</span>
+                            </div>
+                            <input type="range" id="buildingsSlider" class="slider" min="0" max="100" value="15">
+                            <div class="progress-bar buildings-progress"></div>
+                        </div>
+
+                        <!-- Land -->
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <label for="landSlider">
+                                    <i class="fas fa-mountain"></i> Land
+                                </label>
+                                <span class="slider-value" id="landValue">10%</span>
+                            </div>
+                            <input type="range" id="landSlider" class="slider" min="0" max="100" value="10">
+                            <div class="progress-bar land-progress"></div>
+                        </div>
+                    </div>
+
+                    <!-- Total Percentage Display -->
+                    <div class="total-display">
+                        <span>Total: </span>
+                        <span id="totalPercentage" class="total-value">100%</span>
+                        <span id="totalStatus" class="status-indicator"></span>
+                    </div>
+
+                    <!-- Error Message -->
+                    <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+                    <!-- Buttons -->
+                    <div class="button-group">
+                        <button id="displayBtn" class="btn btn-primary btn-lg">
+                            <i class="fas fa-search"></i> Find Image
+                        </button>
+                        <button id="resetBtn" class="btn btn-secondary">
+                            <i class="fas fa-redo"></i> Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Image Display -->
+                <div class="image-panel">
+                    <div class="image-container" id="imageContainer">
+                        <div class="placeholder">
+                            <i class="fas fa-image"></i>
+                            <p>Select percentages and click "Find Image"</p>
+                        </div>
+                    </div>
+
+                    <!-- Image Info -->
+                    <div id="imageInfo" class="image-info" style="display: none;">
+                        <h3>Matched Image Details</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">Water</span>
+                                <span class="info-value water-color" id="infoWater">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Road</span>
+                                <span class="info-value road-color" id="infoRoad">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Vegetation</span>
+                                <span class="info-value vegetation-color" id="infoVegetation">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Buildings</span>
+                                <span class="info-value buildings-color" id="infoBuildings">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Land</span>
+                                <span class="info-value land-color" id="infoLand">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Loading Spinner -->
+                    <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+                        <div class="spinner"></div>
+                        <p>Loading image...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>TerraSegment AI | AI-Powered Terrain Classification</p>
+            <p class="footer-credit">Powered by Flask, TensorFlow & Computer Vision</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
