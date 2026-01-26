@@ -8,11 +8,11 @@
     --primary-color: #6366f1;
     --secondary-color: #8b5cf6;
     --accent-color: #ec4899;
-    --water-color: #0000ff;
-    --road-color: #c0c0c0;
-    --vegetation-color: #00ff00;
-    --buildings-color: #ff0000;
-    --land-color: #ffff00;
+    --water-color: #e2a929;
+    --road-color: #6ec1e4;
+    --vegetation-color: #fedd3a;
+    --buildings-color: #3c1098;
+    --land-color: #8429f6;
     --bg-dark: #0f172a;
     --bg-light: #1e293b;
     --text-light: #e2e8f0;
@@ -803,11 +803,11 @@ body {
     box-shadow: 0 0 10px currentColor;
 }
 
-.building-fill { background: linear-gradient(90deg, #ff00001a, #ff0000); }
-.land-fill { background: linear-gradient(90deg, #ffff001a, #ffff00); }
-.road-fill { background: linear-gradient(90deg, #c0c0c01a, #c0c0c0); }
-.vegetation-fill { background: linear-gradient(90deg, #00ff001a, #00ff00); }
-.water-fill { background: linear-gradient(90deg, #0000ff1a, #0000ff); }
+.building-fill { background: linear-gradient(90deg, #3c10981a, #3c1098); }
+.land-fill { background: linear-gradient(90deg, #8429f61a, #8429f6); }
+.road-fill { background: linear-gradient(90deg, #6ec1e41a, #6ec1e4); }
+.vegetation-fill { background: linear-gradient(90deg, #fedd3a1a, #fedd3a); }
+.water-fill { background: linear-gradient(90deg, #e2a9291a, #e2a929); }
 
 /* Summary Stats */
 .summary-stats {

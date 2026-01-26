@@ -1,3 +1,15 @@
+"""
+⚠️ DEPRECATED - Legacy Application Entry Point
+
+This is the original monolithic Flask application from the hackathon.
+It's kept for backward compatibility and to show the evolution of the codebase.
+
+For production use, please use: python run.py
+
+The new modular structure is located in the app/ directory.
+See ARCHITECTURE.md for details.
+"""
+
 from flask import Flask, render_template, request, jsonify, send_file
 import pandas as pd
 import cv2
@@ -9,19 +21,20 @@ from PIL import Image
 import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
 
+
 app = Flask(__name__)
 
-# Load the CSV data
-csv_path = os.path.join(os.path.dirname(__file__), 'New_dataset.csv')
+# Load the CSV data (updated path)
+csv_path = os.path.join(os.path.dirname(__file__), 'data', 'datasets', 'New_dataset.csv')
 csv_data = pd.read_csv(csv_path)
 
-# Load the trained model
-MODEL_PATH = os.path.join(os.path.dirname(__file__), 'semantic_segmentation_model.h5')
+# Load the trained model (updated path)
+MODEL_PATH = os.path.join(os.path.dirname(__file__), 'models', 'semantic_segmentation_model.h5')
 try:
     model = tf.keras.models.load_model(MODEL_PATH)
     print("✓ Model loaded successfully")
 except:
-    print("⚠ Model not found. Run 'python train_model.py' first to train the model.")
+    print("⚠ Model not found. Run 'python training/train.py' first to train the model.")
     model = None
 
 def load_image(image_path):
@@ -72,12 +85,12 @@ def segment_image(image_rgb):
 def colorize_mask(mask):
     """Convert numeric mask to RGB image"""
     colors = {
-        0: (255, 0, 0),        # Building - red
-        1: (255, 255, 0),      # Land - yellow
-        2: (192, 192, 192),    # Road - gray
-        3: (0, 255, 0),        # Vegetation - green
-        4: (0, 0, 255),        # Water - blue
-        5: (155, 155, 155)     # Unlabeled - gray
+        0: (60, 16, 152),        # Building - Purple
+        1: (132, 41, 246),       # Land - Violet
+        2: (110, 193, 228),      # Road - Cyan
+        3: (254, 221, 58),       # Vegetation - Yellow
+        4: (226, 169, 41),       # Water - Orange
+        5: (155, 155, 155)       # Unlabeled - Gray
     }
     
     colored_mask = np.zeros((mask.shape[0], mask.shape[1], 3), dtype=np.uint8)

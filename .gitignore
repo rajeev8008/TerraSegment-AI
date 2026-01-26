@@ -134,7 +134,19 @@ Thumbs.db
 
 # Project specific
 *.log
+logs/
 predicted*.png
 confusion_matrix.png
 training_history.png
 app.log
+training/outputs/
+notebooks/.ipynb_checkpoints/
+
+# Documentation (exclude from git)
+*.md
+!README.md
+
+# Environment files (exclude from git)
+.env
+.env.local
+.env.*.local
