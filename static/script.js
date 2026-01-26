@@ -5,11 +5,11 @@ const tabContents = document.querySelectorAll('.tab-content');
 tabBtns.forEach(btn => {
     btn.addEventListener('click', () => {
         const tabName = btn.getAttribute('data-tab');
-        
+
         // Remove active class from all
         tabBtns.forEach(b => b.classList.remove('active'));
         tabContents.forEach(c => c.classList.remove('active'));
-        
+
         // Add active class to clicked
         btn.classList.add('active');
         document.getElementById(tabName).classList.add('active');
@@ -43,7 +43,7 @@ uploadBox.addEventListener('drop', (e) => {
     e.preventDefault();
     uploadBox.style.borderColor = 'rgba(99, 102, 241, 0.5)';
     uploadBox.style.background = 'rgba(99, 102, 241, 0.05)';
-    
+
     const files = e.dataTransfer.files;
     if (files.length > 0) {
         imageInput.files = files;
@@ -57,59 +57,59 @@ imageInput.addEventListener('change', uploadImage);
 async function uploadImage() {
     const file = imageInput.files[0];
     if (!file) return;
-    
+
     const formData = new FormData();
     formData.append('file', file);
-    
+
     uploadBox.style.display = 'none';
     aiLoading.style.display = 'block';
     aiResults.style.display = 'none';
     aiError.style.display = 'none';
-    
+
     try {
-        const response = await fetch('/api/upload-image', {
+        const response = await fetch('/api/v1/segment', {
             method: 'POST',
             body: formData
         });
-        
+
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.error || 'Upload failed');
         }
-        
+
         const data = await response.json();
-        
+
         aiLoading.style.display = 'none';
-        
+
         // Display images
         document.getElementById('originalImage').src = 'data:image/png;base64,' + data.original_image;
         document.getElementById('maskImage').src = 'data:image/png;base64,' + data.segmentation_mask;
-        
+
         // Get percentages
         const building = data.building || 0;
         const land = data.land || 0;
         const road = data.road || 0;
         const vegetation = data.vegetation || 0;
         const water = data.water || 0;
-        
+
         // Update analysis panel
         const aiRightPanel = document.getElementById('aiRightPanel');
         aiRightPanel.style.display = 'block';
-        
+
         // Update breakdown bars and percentages
         document.getElementById('buildingPercent').textContent = building.toFixed(2) + '%';
         document.getElementById('landPercent').textContent = land.toFixed(2) + '%';
         document.getElementById('roadPercent').textContent = road.toFixed(2) + '%';
         document.getElementById('vegetationPercent').textContent = vegetation.toFixed(2) + '%';
         document.getElementById('waterPercent').textContent = water.toFixed(2) + '%';
-        
+
         // Update progress bars
         document.getElementById('buildingBar').style.width = building + '%';
         document.getElementById('landBar').style.width = land + '%';
         document.getElementById('roadBar').style.width = road + '%';
         document.getElementById('vegetationBar').style.width = vegetation + '%';
         document.getElementById('waterBar').style.width = water + '%';
-        
+
         // Determine dominant class
         const classes = {
             'Building': building,
@@ -119,13 +119,13 @@ async function uploadImage() {
             'Water': water
         };
         const dominantClass = Object.keys(classes).reduce((a, b) => classes[a] > classes[b] ? a : b);
-        
+
         // Update summary stats
         document.getElementById('dominantClass').textContent = dominantClass;
         document.getElementById('confidence').textContent = 'High';
-        
+
         aiResults.style.display = 'block';
-        
+
     } catch (error) {
         aiLoading.style.display = 'none';
         aiError.style.display = 'flex';
@@ -148,7 +148,7 @@ document.getElementById('copyStats').addEventListener('click', () => {
     const vegetation = document.getElementById('vegetationPercent').textContent;
     const water = document.getElementById('waterPercent').textContent;
     const dominant = document.getElementById('dominantClass').textContent;
-    
+
     const stats = `Terrain Analysis Report\n\n` +
         `Building: ${building}\n` +
         `Land: ${land}\n` +
@@ -156,7 +156,7 @@ document.getElementById('copyStats').addEventListener('click', () => {
         `Vegetation: ${vegetation}\n` +
         `Water: ${water}\n\n` +
         `Dominant Class: ${dominant}`;
-    
+
     navigator.clipboard.writeText(stats).then(() => {
         const btn = document.getElementById('copyStats');
         const originalText = btn.innerHTML;
@@ -252,7 +252,7 @@ displayBtn.addEventListener('click', async () => {
     imageContainer.innerHTML = '';
 
     try {
-        const response = await fetch('/api/get-image', {
+        const response = await fetch('/api/v1/search', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
